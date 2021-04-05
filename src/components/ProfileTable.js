@@ -202,7 +202,7 @@ class ProfileTable extends Component {
                         size='mini'
                     >
                         <Modal.Header>
-                            <span className="img_wrap"><img src={'https://res.cloudinary.com/dzdecrhc3/'+this.state.modal_img} alt="profile" /> Edit Image</span>
+                            <span className="img_wrap"><img src={'https://res.cloudinary.com/dzdecrhc3/'+this.state.modal_img} alt="profile" /> Register a person</span>
                             <div
                                 className="close-icon"
                                 onClick={() => this.setState({ open: false })}
