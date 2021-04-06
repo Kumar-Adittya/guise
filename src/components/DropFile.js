@@ -137,7 +137,7 @@ const DropFile = (props) => {
         <> 
         {console.log()}
             <div className="container">
-                <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 ? <Button primary className="btn-sm" onClick={(e) => props.uploadFiles(e)}>Upload</Button> : ''} </div>
+                <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 ? <Button primary className="btn-sm btn-outline" onClick={(e) => props.uploadFiles(e)}>Upload</Button> : ''}  <Button primary className="btn-sm">Register</Button></div>
                 {unsupportedFiles.length ? <p>Please remove all unsupported files.</p> : ''}
                 <div className="file_uploader"
                     onDragOver={dragOver}

@@ -175,7 +175,9 @@ class ProfileTable extends Component {
                                         <Table.Cell>
                                             {this.props.headerType === 'image' ?<img src={'https://res.cloudinary.com/dzdecrhc3/' + ele.product_image} alt="profile" />:null}
                                             {this.props.headerType === 'image' ? ele.product_image_name : <a rel="noreferrer" href={ele.product_image_name} target="_blank">{ele.product_image_name
-                                        }</a>}</Table.Cell>
+                                        }</a>}
+                                        <span className="approved"></span>
+                                        </Table.Cell>
                                         <Table.Cell>{ele.id}</Table.Cell>
                                         <Table.Cell>{ele.product_name}</Table.Cell>
                                         <Table.Cell>{ele.last_update}</Table.Cell>

@@ -35,7 +35,34 @@ body {
   min-height: 30px;
   border-radius: 6px;
 }
+.ui.primary.button.btn-outline{
+  background: none;
+  border: 1px solid #0038ff;
+  color: #0038ff;
+} 
+.approved {
+  background:#58ff6f;
+   display: inline-block;
+   padding: 5px 5px 1px;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+.approved::after{
+  content: '';
+    display: block;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-2px, -2px);
+}
+ 
 
+
+.ui.primary.button.btn-outline:hover{
+  background: #0038ff;
+  color: #fff;
+}
 .tab-wrap {
   max-width: 800px;
   width: 100%;
