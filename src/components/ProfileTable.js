@@ -98,12 +98,16 @@ class ProfileTable extends Component {
     }
 
     deleteProduct = (id) => {
-        dataService.deleteProduct(token, id)
+        const submitData = new FormData(); 
+        submitData.append('client_ID', id);
+        dataService.deleteProduct(submitData)
             .then(response => {
                 if (response) {
-                    let arrAllData = this.state.userData
+                    let arrAllData = this.state.userData;
+                    console.log("dle", arrAllData);
+                    
                     for (let i = 0; i < arrAllData.length; i++) {
-                        if (arrAllData[i].id === id) {
+                        if (arrAllData[i].c_id === response.clientID) {
                             let idx = i
                             arrAllData.splice(idx,1)
                         }
@@ -131,7 +135,7 @@ class ProfileTable extends Component {
 
     render() {
         return (
-            <div className="table-wrap">
+            <div className="table-wrap"> 
                 {this.props.headerType === 'image'?
                 this.state.show && <div className="success-message">
                     <div className="close-icon" onClick={this.closePopup}>&times;</div>
@@ -173,20 +177,18 @@ class ProfileTable extends Component {
                                 return (
                                     <Table.Row key={i}>
                                         <Table.Cell>
-                                            {this.props.headerType === 'image' ?<img src={'https://res.cloudinary.com/dzdecrhc3/' + ele.product_image} alt="profile" />:null}
-                                            {this.props.headerType === 'image' ? ele.product_image_name : <a rel="noreferrer" href={ele.product_image_name} target="_blank">{ele.product_image_name
-                                        }</a>}
+                                            {this.props.headerType === 'image' ?<img src={ele.img} alt="profile" />:null} 
                                         <span className="approved"></span>
                                         </Table.Cell>
-                                        <Table.Cell>{ele.id}</Table.Cell>
-                                        <Table.Cell>{ele.product_name}</Table.Cell>
-                                        <Table.Cell>{ele.last_update}</Table.Cell>
+                                        <Table.Cell>{ele.c_id}</Table.Cell>
+                                        <Table.Cell>{ele.name}</Table.Cell>
+                                        <Table.Cell>{ele.date}</Table.Cell>
                                         <Table.Cell>
                                             {!ele.product_name && this.props.headerType === 'image' && <span className="badge badge-primary" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.product_image })}>Add Info</span>}
                                             {ele.product_name &&  <span>{this.props.headerType === 'image' ?<span className="table-icon" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.product_image})}><img src={edit_icon} alt=" " /></span>:null}
                                                </span>
                                             }
-                                             <span className="table-icon" onClick={() => this.deleteProduct(ele.id)}><img src={bin_icon} alt=" " /></span>
+                                             <span className="table-icon" onClick={() => this.deleteProduct(ele.c_id)}><img src={bin_icon} alt=" " /></span>
                                         </Table.Cell>
                                     </Table.Row>
                                 )

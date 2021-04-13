@@ -26,17 +26,17 @@ class LiveStreamTab extends Component {
             .then(response => {
                 if (response) {
                     var arrAllVideos = []
-                    for (let i = 0; i < response.results.length; i++) {
-                        // let findInString = response.results[i].product_image.toLowerCase()
-                        // if (findInString.indexOf('mp4') > -1 || findInString.indexOf('webm') > -1 || findInString.indexOf('mov') > -1) {
-                        //     arrAllVideos.push(response.results[i])
-                        // }
-                        let findInString = response.results[i].product_image.toLowerCase()
-                        if (findInString === '' || findInString.indexOf('mp4') > -1 || findInString.indexOf('webm') > -1 || findInString.indexOf('mov') > -1) {
-                            arrAllVideos.push(response.results[i])
-                        }
+                    // for (let i = 0; i < response.results.length; i++) {
+                    //     // let findInString = response.results[i].product_image.toLowerCase()
+                    //     // if (findInString.indexOf('mp4') > -1 || findInString.indexOf('webm') > -1 || findInString.indexOf('mov') > -1) {
+                    //     //     arrAllVideos.push(response.results[i])
+                    //     // }
+                    //     let findInString = response.results[i].product_image.toLowerCase()
+                    //     if (findInString === '' || findInString.indexOf('mp4') > -1 || findInString.indexOf('webm') > -1 || findInString.indexOf('mov') > -1) {
+                    //         arrAllVideos.push(response.results[i])
+                    //     }
 
-                    }
+                    // }
                     this.setState({ userData: arrAllVideos, isProfileTable: true })
                 } else {
                     window.localStorage.removeItem("token");
@@ -68,17 +68,19 @@ class LiveStreamTab extends Component {
     submitHandler = (e) => {
         e.preventDefault();
         const submitData = new FormData();
-        submitData.append('product_name', '');
-        if(this.state.product_image_name !== ''){
-            submitData.append('product_image_name', this.state.product_image_name);
-            submitData.append('product_image', '');
-        }else{
-            submitData.append('product_image_name', '');
-            submitData.append('product_image', this.state.product_image);
-        }
-        let token = window.localStorage.getItem('token');
+       
+        // submitData.append('video_path', this.state.product_image); 
+        if(this.state.product_image_name !== ''){ 
+            submitData.append('rtsp_link', this.state.product_image_name);
+            submitData.append('video_path', '');
+        }else{ 
+            submitData.append('rtsp_link', 'None');
+            submitData.append('video_path', 'input_videos/'+this.state.product_image.name);
+        } 
+        console.log(this.state.product_image);
+        
         this.setState({ open: false });
-        dataService.createProduct(token, submitData)
+        dataService.uploadVideo(submitData)
             .then(response => {
                 if (response) {
                     this.setState({

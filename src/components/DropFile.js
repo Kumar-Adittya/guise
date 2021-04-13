@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react'; 
+import { Alert } from 'react-bootstrap';
  
 const DropFile = (props) => {
 
@@ -12,7 +13,9 @@ const DropFile = (props) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [validFiles, setValidFiles] = useState([]);
     const [unsupportedFiles, setUnsupportedFiles] = useState([]);
-    const [errorMessage, setErrorMessage] = useState(''); 
+    const [errorMessage, setErrorMessage] = useState('');  
+    const [fileExceed, setFileExceed] = useState(false);  
+    
     useEffect(() => {
         let filteredArr = selectedFiles.reduce((acc, current) => {
             const x = acc.find(item => item.name === current.name);
@@ -26,7 +29,14 @@ const DropFile = (props) => {
     }, [selectedFiles]);
     
     useEffect(() => {
-        props.parentCallback(validFiles);  
+        if(validFiles.length < 5){
+            setFileExceed(false);
+            props.parentCallback(validFiles); 
+        }
+        else{
+            setFileExceed(true);
+        }
+         
     }, [validFiles])
 
     const preventDefault = (e) => {
@@ -49,12 +59,14 @@ const DropFile = (props) => {
     const fileDrop = (e) => {
         preventDefault(e); 
         const files = e.dataTransfer.files;
+        console.log(files.length); 
         if (files.length) {
             handleFiles(files); 
         }
+        
     }
 
-    const filesSelected = () => { 
+    const filesSelected = () => {   
         if (fileInputRef.current.files.length) { 
             handleFiles(fileInputRef.current.files);
         }
@@ -64,8 +76,7 @@ const DropFile = (props) => {
         fileInputRef.current.click(); 
     }
 
-    const handleFiles = (files) => { 
-       
+    const handleFiles = (files) => {  
         for(let i = 0; i < files.length; i++) { 
             if (validateFile(files[i])) {
                 setSelectedFiles(prevArray => [...prevArray, files[i]]);
@@ -75,7 +86,7 @@ const DropFile = (props) => {
                 setErrorMessage('File type not permitted');
                 setUnsupportedFiles(prevArray => [...prevArray, files[i]]);
             }
-        }
+        } 
     }
 
     const validateFile = (file) => {
@@ -134,10 +145,9 @@ const DropFile = (props) => {
      
 
     return (
-        <> 
-        {console.log()}
+        <>  
             <div className="container">
-                <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 ? <Button primary className="btn-sm btn-outline" onClick={(e) => props.uploadFiles(e)}>Upload</Button> : ''}  <Button primary className="btn-sm">Register</Button></div>
+                <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 && !fileExceed ? <Button primary className="btn-sm btn-outline" onClick={(e) => props.uploadFiles(e)}>Upload</Button> : ''}  <Button primary className="btn-sm">Register</Button></div>
                 {unsupportedFiles.length ? <p>Please remove all unsupported files.</p> : ''}
                 <div className="file_uploader"
                     onDragOver={dragOver}
@@ -159,7 +169,8 @@ const DropFile = (props) => {
                       </div>
                 </div>
                 <div className="file-display-container">
-                    {
+                    {fileExceed && <p className="file-error-message">Client have maximum 4 images. </p>}
+                    { 
                         validFiles.map((data, i) => 
                             <div className="file-status-bar" key={i}>
                                 <div onClick={!data.invalid ? () => openImageModal(data) : () => removeFile(data.name)}> 

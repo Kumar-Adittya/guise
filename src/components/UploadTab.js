@@ -4,7 +4,7 @@ import ProfileTable from './ProfileTable';
 import { dataService } from '../utility/data.service'; 
 
 import DropFile from './DropFile'
-
+import { log } from 'util'; 
 class UploadTab extends Component {
     constructor(props) {
         super(props);
@@ -17,7 +17,8 @@ class UploadTab extends Component {
             product_image: '',
             isUpload: false,
             isProfileTable: false,
-            validFiles: []
+            validFiles: [],
+            c_id: 0
         }
     }
 
@@ -40,37 +41,41 @@ class UploadTab extends Component {
         this.setState({
             isProfileTable: false, 
         })
-        dataService.getAllProducts(window.localStorage.getItem("token"))
+        const countData = new FormData();
+        countData.append('count', '0');
+
+        dataService.getAllProducts(countData)
             .then(response => {
                 if (response) {
-                    var arrAllImages = []
-                    for (let i = 0; i < response.results.length; i++) {
-                        let findInString = response.results[i].product_image.toLowerCase()
-                        if(findInString.indexOf('png') > -1 || findInString.indexOf('jpg') > -1 || findInString.indexOf('jpeg') > -1){
-                            arrAllImages.push(response.results[i])
-                        } 
+                    let arrAllImages = [], response_arr = response.records && Object.values(response.records), clientId_arr = Object.keys(response.records);
+                    
+                    for(let ele in clientId_arr){ 
+                        response_arr[ele].c_id = clientId_arr[ele];
+                    }  
+                    for (let i = 0; i < response_arr.length; i++) { 
+                        arrAllImages.push(response_arr[i]); 
                     }
-                    this.setState({ userData: arrAllImages, isProfileTable: true })
+                    let count = arrAllImages.length + 4; 
+                    this.setState({ userData: arrAllImages, isProfileTable: true, c_id: count })
                 } else {
                     window.localStorage.removeItem("token");
                 }
             })
+
     }
     componentDidMount() {
-        this.getAllProducts(); 
+        this.getAllProducts();  
+        
     }
     submitHandler = (e) => {
-        e.preventDefault(); 
-        let token = window.localStorage.getItem('token');
-        this.setState({ open: false });
-        console.log("ValidFiles", this.state.validFiles);
+        e.preventDefault();  
+        this.setState({ open: false }); 
+        const submitData = new FormData();
+        submitData.append(this.state.c_id, 'John Doe'); 
         for (let i = 0; i < this.state.validFiles.length; i++) {
-            const submitData = new FormData();
-            submitData.append('product_name', '');
-            submitData.append('product_image_name', ''); 
-            submitData.append('product_image', this.state.validFiles[i]);  
-            
-        dataService.createProduct(token, submitData)
+            submitData.append(this.state.c_id+'_'+i, this.state.validFiles[i]);  
+        }   
+        dataService.createProduct(submitData)
             .then(response => {
                 if (response) { 
                     this.setState(prevState => { 
@@ -81,12 +86,12 @@ class UploadTab extends Component {
                             userData: [...prevState.userData, response]
                         }
                     });
-                    this.getAllProducts() 
+                    this.getAllProducts(); 
                 } else {
                     window.localStorage.removeItem("token");
                 }
             })
-        }
+        
     }
     render() {
         return (
@@ -104,7 +109,7 @@ class UploadTab extends Component {
                         <span className="badge badge-primary">Sample CSV</span> 
                     </div> */}
                      
-                <DropFile uploadFiles = {this.submitHandler} isUpload = {this.state.isUpload} parentCallback={this.handleCallback}/>
+                <DropFile uploadFiles = {(e) => this.submitHandler(e, this.state.c_id)} isUpload = {this.state.isUpload} parentCallback={this.handleCallback}/>
                 {this.state.isProfileTable ?
                     <ProfileTable userData={this.state.userData} headerType={'image'}/> :
                     <div className="spinner">

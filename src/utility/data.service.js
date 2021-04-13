@@ -4,6 +4,7 @@ export const dataService = {
     authToken,
     getAllProducts,
     createProduct,
+    uploadVideo,
     editProduct,
     deleteProduct
 };
@@ -12,8 +13,8 @@ export const dataService = {
 
 function authToken(username, password) {
     let formdata = new FormData();
-    formdata.append("username", username);
-    formdata.append("password", password);
+        formdata.append("username", username);
+        formdata.append("password", password);
 
     const requestOptions = {
         method: 'POST',
@@ -27,16 +28,18 @@ function authToken(username, password) {
             return result;
         });
 }
-function getAllProducts(token) {
+function getAllProducts(formdata) {
     const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': "Token " + token,
-        }
+        method: 'POST',
+        // headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //     'Authorization': "Token " + token,
+        // }
+        body: formdata,
+        redirect: 'follow'
     };
 
-    return fetch(config.apiUrl + '/products/api', requestOptions)
+    return fetch(config.apiUrl2 + '/get_records', requestOptions)
         .then((res) => res.json()).then((result) => {
             return result;
         });
@@ -55,28 +58,43 @@ function editProduct(token, id, formdata) {
             return result;
         });
 }
-function deleteProduct(token, id) {
-    const requestOptions = {
-        method: 'DELETE',
-        headers: {
-            'Authorization': "Token " + token,
-        }
-    };
-    return fetch(config.apiUrl + '/products/api/delete?id=' + id, requestOptions)
-        .then((res) => res.json()).then((result) => {
-            return result;
-        });
-}
-function createProduct(token, formdata) {
+function deleteProduct(formdata) {
     const requestOptions = {
         method: 'POST',
-        headers: {
-            'Authorization': "Token " + token,
-        },
-        body: formdata
+        // headers: {
+        //     'Authorization': "Token " + token,
+        // }
+        body: formdata,
+        redirect: 'follow' 
     };
-    return fetch(config.apiUrl + '/products/api/create', requestOptions)
+    return fetch(config.apiUrl2 + '/delete_image', requestOptions)
         .then((res) => res.json()).then((result) => {
             return result;
         });
 }
+function createProduct(formdata) {
+    const requestOptions = {
+        method: 'POST',
+        // headers: {
+        //     'Authorization': "Token " + token,
+        // },
+        body: formdata,
+        redirect: 'follow'
+    };
+    return fetch(config.apiUrl2+'/register', requestOptions)
+        .then((res) => res.json()).then((result) => {
+            return result;
+        });
+}
+function uploadVideo(formdata) {
+    const requestOptions = {
+        method: 'POST', 
+        body: formdata,
+        redirect: 'follow'
+    };
+    return fetch(config.apiUrl2+'/ipcam', requestOptions)
+        .then((res) => res.json()).then((result) => {
+            return result;
+        });
+}
+
