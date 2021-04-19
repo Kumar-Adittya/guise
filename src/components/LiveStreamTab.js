@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { livestream_img } from '../images/index'
-import ProfileTable from './ProfileTable';
+// import ProfileTable from './ProfileTable';
 import { dataService } from '../utility/data.service';
 import { Button } from 'semantic-ui-react';
 
@@ -11,8 +11,8 @@ class LiveStreamTab extends Component {
             open: false,
             show: false,
             userData: [],
-            product_name: '',
-            product_image_name: '',
+            videoUrl: '',
+            videoPath: '',
             product_image: '',
             isUpload: false,
             isProfileTable: false
@@ -43,23 +43,27 @@ class LiveStreamTab extends Component {
                 }
             })
     }
-    handleChange = (e) => {
-        let fileVal = this.fileInput.value
-            ? this.fileInput.files[0]
-            : '';
-        this.setState({
-            product_image: fileVal,
-            isUpload: true
-        });
+    handleChangePath = (e) => {
+        let fileVal = e.target.value
+        if (fileVal.trim() !== '') {
+            this.setState({
+                videoPath: fileVal,
+                isUpload: true
+            });
+        } else {
+            this.setState({
+                isUpload: false
+            });
+        }
     }
     handleChangeUrl = (e) => {
         let fileVal = e.target.value;
         if (fileVal.trim() !== '') {
             this.setState({
-                product_image_name: fileVal,
+                videoUrl: fileVal,
                 isUpload: true
             });
-        }else{
+        } else {
             this.setState({
                 isUpload: false
             });
@@ -68,17 +72,16 @@ class LiveStreamTab extends Component {
     submitHandler = (e) => {
         e.preventDefault();
         const submitData = new FormData();
-       
+
         // submitData.append('video_path', this.state.product_image); 
-        if(this.state.product_image_name !== ''){ 
-            submitData.append('rtsp_link', this.state.product_image_name);
+        if (this.state.videoUrl !== '') {
+            submitData.append('rtsp_link', this.state.videoUrl);
             submitData.append('video_path', '');
-        }else{ 
+        } else {
             submitData.append('rtsp_link', 'None');
-            submitData.append('video_path', 'input_videos/'+this.state.product_image.name);
-        } 
-        console.log(this.state.product_image);
-        
+            submitData.append('video_path', this.state.videoPath);
+        }
+
         this.setState({ open: false });
         dataService.uploadVideo(submitData)
             .then(response => {
@@ -86,13 +89,27 @@ class LiveStreamTab extends Component {
                     this.setState({
                         show: true,
                         isUpload: false,
-                        product_image_name: '',
-                        product_image: ''
+                        videoPath: '',
+                        videoUrl: ''
                     });
+                    alert(response.statusText)
                     this.getAllProducts()
                 } else {
                     window.localStorage.removeItem("token");
+                    this.setState({
+                        videoPath: '',
+                        videoUrl: '',
+                        isUpload: false
+                    })
                 }
+            })
+            .catch(error => { 
+               alert(error)
+                this.setState({
+                    videoPath: '',
+                    videoUrl: '',
+                    isUpload: false,
+                })
             })
     }
 
@@ -108,28 +125,24 @@ class LiveStreamTab extends Component {
                         <img src={livestream_img} alt="Upload" />
                     </div>
                     <div className="form-group">
-                        <input type="text" onChange={this.handleChangeUrl} placeholder="Enter URL" className="form-control" />
+                        <input type="text" onChange={this.handleChangeUrl} value={this.state.videoUrl} placeholder="Enter URL" className="form-control" />
                     </div>
-                    <p className="upload-text">Upload Video</p>
+                    <p className="upload-text">Upload Video Path</p>
                     <form onSubmit={this.submitHandler}>
-                        <div className="file_uploader">
-                            <label htmlFor="file_upload">
-                                <input ref={input => this.fileInput = input} accept="video/*" name="data" type="file" onChange={this.handleChange} hidden id="file_upload" />
-                                <p>Drop your file(s) MPEG-4, WEBM & MOV here or <span className="browse">browse</span></p>
-                                <p><small>Max. File Size : NA</small></p>
-                            </label>
+                        <div className="form-group">
+                            <input type="text" onChange={this.handleChangePath} value={this.state.videoPath} placeholder="Enter Path" className="form-control" />
                         </div>
                         {this.state.isUpload && <div className="upload_btn">
                             <Button type="submit" primary>Upload</Button>
                         </div>}
                     </form>
                 </div>
-                {this.state.isProfileTable ?
+                {/* {this.state.isProfileTable ?
                     <ProfileTable userData={this.state.userData} headerType={'video'} /> :
                     <div className="spinner">
                         <div className="loader"></div>
                     </div>
-                }
+                } */}
             </div>
         );
     }

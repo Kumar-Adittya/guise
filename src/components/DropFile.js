@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react'; 
-import { Alert } from 'react-bootstrap';
- 
+import { Button } from 'semantic-ui-react';   
+
 const DropFile = (props) => {
 
     const fileInputRef = useRef();
@@ -15,7 +14,10 @@ const DropFile = (props) => {
     const [unsupportedFiles, setUnsupportedFiles] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');  
     const [fileExceed, setFileExceed] = useState(false);  
+    const [upload, setUpload] = useState(props.isUpload); 
     
+    
+
     useEffect(() => {
         let filteredArr = selectedFiles.reduce((acc, current) => {
             const x = acc.find(item => item.name === current.name);
@@ -25,23 +27,28 @@ const DropFile = (props) => {
                 return acc;
             }
         }, []);
-        setValidFiles([...filteredArr]);
+        setValidFiles([...filteredArr]); 
+        setUpload(true);
     }, [selectedFiles]);
     
+    useEffect(() => {
+        setValidFiles([]);
+        setSelectedFiles([])
+    },[props.isUpload]); 
+
     useEffect(() => {
         if(validFiles.length < 5){
             setFileExceed(false);
             props.parentCallback(validFiles); 
         }
-        else{
+        else {
             setFileExceed(true);
         }
          
     }, [validFiles])
 
     const preventDefault = (e) => {
-        e.preventDefault();
-        // e.stopPropagation();
+        e.preventDefault(); 
     }
 
     const dragOver = (e) => {
@@ -62,8 +69,7 @@ const DropFile = (props) => {
         console.log(files.length); 
         if (files.length) {
             handleFiles(files); 
-        }
-        
+        } 
     }
 
     const filesSelected = () => {   
@@ -90,7 +96,7 @@ const DropFile = (props) => {
     }
 
     const validateFile = (file) => {
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/x-icon'];
+        const validTypes = ['text/csv'];
         if (validTypes.indexOf(file.type) === -1) {
             return false;
         } 
@@ -101,7 +107,7 @@ const DropFile = (props) => {
         if (size === 0) {
           return '0 Bytes';
         }
-        const k = 1024;
+        const k = 5120;
         const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         const i = Math.floor(Math.log(size) / Math.log(k));
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
@@ -145,9 +151,9 @@ const DropFile = (props) => {
      
 
     return (
-        <>  
+        <>   
             <div className="container">
-                <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 && !fileExceed ? <Button primary className="btn-sm btn-outline" onClick={(e) => props.uploadFiles(e)}>Upload</Button> : ''}  <Button primary className="btn-sm">Register</Button></div>
+                <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 && !fileExceed ? <Button primary className="btn-sm btn-outline" onClick={(e) => props.uploadFiles(e)}>Register</Button> : ''}</div>
                 {unsupportedFiles.length ? <p>Please remove all unsupported files.</p> : ''}
                 <div className="file_uploader"
                     onDragOver={dragOver}
@@ -157,18 +163,18 @@ const DropFile = (props) => {
                     onClick={fileInputClicked}
                 > 
                       <div className="inner_upload">
-                      <p>Drop your file(s) JPG/PNG/JPEG here or <span className="browse">browse</span></p>
-                            <p><small>Max. File Size : 1MB</small></p> 
+                      <p>Drop your CSV file(s) here or <span className="browse">browse</span></p>
+                            <p><small>Max. File Size : 5MB</small></p> 
                     <input
                         ref={fileInputRef}
                         className="file-input"
                         type="file"
-                        multiple
+                        // multiple
                         onChange={filesSelected}
                     />
                       </div>
                 </div>
-                <div className="file-display-container">
+               { upload ? <div className="file-display-container">
                     {fileExceed && <p className="file-error-message">Client have maximum 4 images. </p>}
                     { 
                         validFiles.map((data, i) => 
@@ -182,7 +188,7 @@ const DropFile = (props) => {
                             </div>
                         )
                     }
-                </div>
+                </div> : null}
             </div>
             <div className="modal" ref={modalRef}>
                 <div className="overlay"></div>

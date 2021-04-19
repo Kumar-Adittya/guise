@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { upload_img } from '../images/index'
+import { upload_img, csvFile } from '../images/index'
 import ProfileTable from './ProfileTable';
-import { dataService } from '../utility/data.service'; 
-
+import { dataService } from '../utility/data.service';
 import DropFile from './DropFile'
-import { log } from 'util'; 
+// import { log } from 'util';
 class UploadTab extends Component {
     constructor(props) {
         super(props);
@@ -17,29 +16,63 @@ class UploadTab extends Component {
             product_image: '',
             isUpload: false,
             isProfileTable: false,
-            validFiles: [],
-            c_id: 0
+            validFiles: {},
+            csv_file: {},
+            isAllUser: false,
+            error_msg: '0'
         }
     }
 
-    handleCallback = (childData) => { 
-        this.setState({validFiles: childData})
+    handleCallback = (childData) => {
+        this.setState({ validFiles: childData })
+        this.setState({
+            csv_file: childData[0]
+        })
+        console.log(childData[0])
     }
 
     handleChange = (e) => {
         let fileVal = this.fileInput.value
-        ? this.fileInput.files[0]
-        : '';
+            ? this.fileInput.files[0]
+            : '';
         this.setState({
-            product_image: fileVal, 
+            product_image: fileVal,
         });
-        sessionStorage.setItem('isFileAvailable', true); 
-        
-    }
+        sessionStorage.setItem('isFileAvailable', true);
 
+    }
+    registerClient = (e) => {
+        e.preventDefault();
+        this.setState(prevState => {
+            return {
+                ...prevState,
+                isAllUser: true,
+            }
+        })
+    }
+    saveData = (e) => {
+        e.preventDefault();
+        let saveImgData = [];
+        for (let i = 0; i < this.state.validFiles.length; i++) {
+            console.log(this.state.validFiles[i]);
+            let obj = {};
+            obj["name"] = '';
+            obj["img"] = this.state.validFiles[i];
+            obj["date"] = new Date().toLocaleDateString("en-US");
+            saveImgData.push(obj);
+        }
+        this.setState(prevState => {
+            return {
+                ...prevState,
+                show: true,
+                isUpload: !this.state.isUpload,
+                userData: [...prevState.userData, ...saveImgData]
+            }
+        });
+    }
     getAllProducts = () => {
         this.setState({
-            isProfileTable: false, 
+            isProfileTable: false,
         })
         const countData = new FormData();
         countData.append('count', '0');
@@ -47,16 +80,22 @@ class UploadTab extends Component {
         dataService.getAllProducts(countData)
             .then(response => {
                 if (response) {
-                    let arrAllImages = [], response_arr = response.records && Object.values(response.records), clientId_arr = Object.keys(response.records);
-                    
-                    for(let ele in clientId_arr){ 
-                        response_arr[ele].c_id = clientId_arr[ele];
-                    }  
-                    for (let i = 0; i < response_arr.length; i++) { 
-                        arrAllImages.push(response_arr[i]); 
+                    let arrAllImages = [];
+                    if (response.records) {
+                        var response_arr = response.records && Object.values(response.records), clientId_arr = Object.keys(response.records);
+
+
+                        for (let ele in clientId_arr) {
+                            response_arr[ele].c_id = clientId_arr[ele];
+                        }
+                        for (let i = 0; i < response_arr.length; i++) {
+                            arrAllImages.push(response_arr[i]);
+                        }
                     }
-                    let count = arrAllImages.length + 4; 
-                    this.setState({ userData: arrAllImages, isProfileTable: true, c_id: count })
+                    let count = arrAllImages.length + 1;
+                    this.setState({ userData: arrAllImages, isProfileTable: true, c_id: count });
+
+
                 } else {
                     window.localStorage.removeItem("token");
                 }
@@ -64,43 +103,47 @@ class UploadTab extends Component {
 
     }
     componentDidMount() {
-        this.getAllProducts();  
-        
+        this.getAllProducts();
+
     }
     submitHandler = (e) => {
-        e.preventDefault();  
-        this.setState({ open: false }); 
+        e.preventDefault();
+        this.setState({ open: false });
         const submitData = new FormData();
-        submitData.append(this.state.c_id, 'John Doe'); 
-        for (let i = 0; i < this.state.validFiles.length; i++) {
-            submitData.append(this.state.c_id+'_'+i, this.state.validFiles[i]);  
-        }   
+        submitData.append('csv_file', this.state.csv_file, this.state.csv_file.name);
+
         dataService.createProduct(submitData)
             .then(response => {
-                if (response) { 
-                    this.setState(prevState => { 
+                if (response) {
+                    this.setState(prevState => {
                         return {
                             ...prevState,
                             show: true,
-                            isUpload: false, 
-                            userData: [...prevState.userData, response]
+                            isUpload: !this.state.isUpload,
+                            userData: [...prevState.userData, response],
+                            error_msg: response.error_msg,
+                            csv_file: {}
                         }
                     });
-                    this.getAllProducts(); 
+                    this.getAllProducts();
                 } else {
                     window.localStorage.removeItem("token");
                 }
             })
-        
+
     }
+
     render() {
         return (
             <div className="tab-content">
+                {console.log("userData", this.state.userData)}
                 <div className="image_caption">
                     <img src={upload_img} alt="Upload" />
-                    <p>Upload Images</p>
-                </div> 
-                    {/* <div className="file_uploader">
+                    <p>Upload CSV</p>
+                </div>
+
+
+                {/* <div className="file_uploader">
                         <label htmlFor="file_upload">
                             <input hidden ref={input => this.fileInput = input} accept="image/*" name="data" type="file" onChange={this.handleChange} id="file_upload" />
                             <p>Drop your file(s) JPG/PNG/JPEG here or <span className="browse">browse</span></p>
@@ -108,10 +151,12 @@ class UploadTab extends Component {
                         </label>
                         <span className="badge badge-primary">Sample CSV</span> 
                     </div> */}
-                     
-                <DropFile uploadFiles = {(e) => this.submitHandler(e, this.state.c_id)} isUpload = {this.state.isUpload} parentCallback={this.handleCallback}/>
+                <div className="sample_download">
+                    <a href={csvFile} download>Download Sample</a>
+                </div>
+                <DropFile uploadFiles={(e) => this.submitHandler(e)} isUpload={!this.state.isUpload} registerClient={(e) => this.registerClient(e)} parentCallback={this.handleCallback} />
                 {this.state.isProfileTable ?
-                    <ProfileTable userData={this.state.userData} headerType={'image'}/> :
+                    <ProfileTable userData={this.state.userData} isShow={this.state.show} isAllUser={this.state.isAllUser} headerType={'image'} errorMsg={this.state.error_msg} /> :
                     <div className="spinner">
                         <div className="loader"></div>
                     </div>

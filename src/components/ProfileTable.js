@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { table_user, bin_icon, edit_icon } from '../images/index'
+// import { table_user, bin_icon, edit_icon } from '../images/index'
+import { bin_icon } from '../images/index'
 import { Table, Button, Modal } from 'semantic-ui-react'
 import { dataService } from '../utility/data.service';
 // import {Alert} from 'react-bootstrap';
-
+// import config from "../utility/config";
 const token = window.localStorage.getItem('token');
 class ProfileTable extends Component {
     // const [open, setOpen] = useState(false);
@@ -16,15 +17,19 @@ class ProfileTable extends Component {
             open: false,
             show: false,
             loading: true,
+            client_select: 'Select Client',
             userData: [],
             product_name: '',
             product_image_name: '',
             product_image: '',
             edit_id: '',
             dlt_id: '',
-            modal_img: ''
+            modal_img: '',
+            isAllUser: false,
+            errorMsg: '0',
+            isShow: false
         }
-        console.log(this.props.userData)
+        console.log("userData", this.props.userData)
         this.upload = React.createRef();
     }
 
@@ -121,13 +126,33 @@ class ProfileTable extends Component {
                 }
             })
     }
-    closePopup = () => {
-        this.setState({ show: false })
+    closePopup = () => { 
+        this.setState(()=>{
+             return {show: false, isShow: false }
+        }) 
     }
+
+    errorHandler = () => {
+        this.setState({
+            isShow: true
+        })
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.userData !== state.userData) {
+          return { 
+            userData: props.userData,
+            isAllUser: props.isAllUser
+          };
+        }  
+        return null;
+      }
 
     componentDidMount() {
         this.setState({
-            userData: this.props.userData
+            userData: this.props.userData,
+            errorMsg: this.props.errorMsg,
+            isShow: this.props.isShow
         })
 
     }
@@ -136,22 +161,28 @@ class ProfileTable extends Component {
     render() {
         return (
             <div className="table-wrap"> 
-                {this.props.headerType === 'image'?
+            {
+                this.state.isShow && <div className="success-message">
+                <div className="close-icon" onClick={this.closePopup}>&times;</div>
+                <div className="success-heading">Errors</div>
+                <p>{this.state.errorMsg !== '0'? this.state.errorMsg: 'No errors found!' }</p>
+            </div>
+            }
+                {/* {this.props.headerType === 'image'?
                 this.state.show && <div className="success-message">
                     <div className="close-icon" onClick={this.closePopup}>&times;</div>
-                    <div className="success-heading">Image Upload Guidelines</div>
+                    <div className="success-heading">Images Uploaded</div>
                     <p>Drop or select image i.e png,jpg&jpeg</p>
                 </div>:
                 this.state.show && <div className="success-message">
                     <div className="close-icon" onClick={this.closePopup}>&times;</div>
                     <div className="success-heading">Video Upload Guidelines</div>
                     <p>Drop or select video i.e MPEG-4, WEBM & MOV</p>
-                </div>}
-
+                </div>} */}
                 <h3 className="table-heading">
                 {this.props.headerType === 'image'?
                     'Registered':'Total Count'}
-                     : {this.state.userData.length} <span className="badge badge-primary"><span className="badge-icon primary">?</span>Error : 0</span></h3>
+                     : {this.state.userData && this.state.userData.length} <span className="badge badge-primary" onClick={this.errorHandler}><span className="badge-icon primary">?</span>Error : {this.state.errorMsg!== '0' ? 1 : 0}</span></h3>
                 <div className="table-responsive">
                     <Table basic='very'>
                         <Table.Header>
@@ -173,21 +204,23 @@ class ProfileTable extends Component {
                         </Table.Header>
 
                         <Table.Body>
-                            {this.state.userData.map((ele, i) => {
+                            {this.state.userData && this.state.userData.map((ele, i) => {
                                 return (
                                     <Table.Row key={i}>
                                         <Table.Cell>
                                             {this.props.headerType === 'image' ?<img src={ele.img} alt="profile" />:null} 
-                                        <span className="approved"></span>
+                                            {ele.status === 'Registered'?
+                                            <span className="approved"></span>:null
+                                            }
                                         </Table.Cell>
-                                        <Table.Cell>{ele.c_id}</Table.Cell>
+                                        <Table.Cell>{i+1}</Table.Cell>
                                         <Table.Cell>{ele.name}</Table.Cell>
                                         <Table.Cell>{ele.date}</Table.Cell>
                                         <Table.Cell>
-                                            {!ele.product_name && this.props.headerType === 'image' && <span className="badge badge-primary" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.product_image })}>Add Info</span>}
-                                            {ele.product_name &&  <span>{this.props.headerType === 'image' ?<span className="table-icon" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.product_image})}><img src={edit_icon} alt=" " /></span>:null}
+                                            {/* {!ele.product_name && this.props.headerType === 'image' && <span className="badge badge-primary" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.img })}>Add Info</span>}
+                                            {ele.product_name &&  <span>{this.props.headerType === 'image' ?<span className="table-icon" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.img})}><img src={edit_icon} alt=" " /></span>:null}
                                                </span>
-                                            }
+                                            } */}
                                              <span className="table-icon" onClick={() => this.deleteProduct(ele.c_id)}><img src={bin_icon} alt=" " /></span>
                                         </Table.Cell>
                                     </Table.Row>
@@ -215,18 +248,29 @@ class ProfileTable extends Component {
                         <Modal.Content >
                             <Modal.Description>
                                 <form onSubmit={this.submitHandler}>
+                                    {this.state.isAllUser && <div className="form-group">
+                                        <label>Client List</label>
+                                        <select className="form-control" name="client_select" value={this.state.client_select} onChange={this.handleInputChange}> 
+                                            {this.state.userData && this.state.userData.map((ele, i) => {
+                                                return (
+                                                    <option value={i}>{i}</option>
+                                                )
+                                            })
+                                            }
+                                        </select>
+                                    </div>}
                                     <div className="form-group">
                                         <label>Client Name</label>
                                         <input name="product_name" type="text" value={this.state.product_name} onChange={this.handleInputChange} className="form-control" />
                                     </div>
-                                    <div className="form-group">
+                                    {/* <div className="form-group">
                                         <label>Client Image Name</label>
                                         <input name="product_image_name" type="text" value={this.state.product_image_name} onChange={this.handleInputChange} className="form-control" />
                                     </div>
                                     <div className="form-group">
                                         <label>Client Image</label>
                                         <input name="product_image" ref={input => this.fileInput = input} type="file" onChange={this.handleFileChange} className="form-control" />
-                                    </div>
+                                    </div> */}
                                     <Button primary className="w-100">Save</Button>
                                 </form>
                             </Modal.Description>

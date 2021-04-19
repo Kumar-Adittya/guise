@@ -93,7 +93,7 @@ function uploadVideo(formdata) {
         redirect: 'follow'
     };
     return fetch(config.apiUrl2+'/ipcam', requestOptions)
-        .then((res) => res.json()).then((result) => {
+        .then((res) => res).then((result) => {
             return result;
         });
 }
