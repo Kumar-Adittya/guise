@@ -163,7 +163,7 @@ const DropFile = (props) => {
                     onClick={fileInputClicked}
                 > 
                       <div className="inner_upload">
-                      <p>Drop your CSV file(s) here or <span className="browse">browse</span></p>
+                      <p>Drop your CSV file here or <span className="browse">browse</span></p>
                             <p><small>Max. File Size : 5MB</small></p> 
                     <input
                         ref={fileInputRef}

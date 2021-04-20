@@ -152,7 +152,7 @@ class UploadTab extends Component {
                         <span className="badge badge-primary">Sample CSV</span> 
                     </div> */}
                 <div className="sample_download">
-                    <a href={csvFile} download>Download Sample</a>
+                    <a href={csvFile} name={'test_csv_aws.csv'} type="text/csv" download>Download Sample</a>
                 </div>
                 <DropFile uploadFiles={(e) => this.submitHandler(e)} isUpload={!this.state.isUpload} registerClient={(e) => this.registerClient(e)} parentCallback={this.handleCallback} />
                 {this.state.isProfileTable ?

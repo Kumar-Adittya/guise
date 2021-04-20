@@ -27,6 +27,7 @@ class ProfileTable extends Component {
             modal_img: '',
             isAllUser: false,
             errorMsg: '0',
+            errorBool: false,
             isShow: false
         }
         console.log("userData", this.props.userData)
@@ -149,9 +150,12 @@ class ProfileTable extends Component {
       }
 
     componentDidMount() {
+        let errors = /^([a-z0-9]{5,})$/.test(this.props.errorMsg)
+        console.log(errors)
         this.setState({
+            errorBool: errors,
             userData: this.props.userData,
-            errorMsg: this.props.errorMsg,
+            errorMsg: errors ? this.props.errorMsg:'0',
             isShow: this.props.isShow
         })
 
