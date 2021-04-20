@@ -217,7 +217,7 @@ class ProfileTable extends Component {
                                             <span className="approved"></span>:null
                                             }
                                         </Table.Cell>
-                                        <Table.Cell>{i+1}</Table.Cell>
+                                        <Table.Cell>{ele.id}</Table.Cell>
                                         <Table.Cell>{ele.name}</Table.Cell>
                                         <Table.Cell>{ele.date}</Table.Cell>
                                         <Table.Cell>
@@ -225,7 +225,7 @@ class ProfileTable extends Component {
                                             {ele.product_name &&  <span>{this.props.headerType === 'image' ?<span className="table-icon" onClick={() => this.setState({ open: true, edit_id: ele.id, modal_img: ele.img})}><img src={edit_icon} alt=" " /></span>:null}
                                                </span>
                                             } */}
-                                             <span className="table-icon" onClick={() => this.deleteProduct(ele.c_id)}><img src={bin_icon} alt=" " /></span>
+                                             <span className="table-icon" onClick={() => this.deleteProduct(ele.id)}><img src={bin_icon} alt=" " /></span>
                                         </Table.Cell>
                                     </Table.Row>
                                 )
