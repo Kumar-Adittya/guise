@@ -212,7 +212,7 @@ class ProfileTable extends Component {
                                 return (
                                     <Table.Row key={i}>
                                         <Table.Cell>
-                                            {this.props.headerType === 'image' ?<img src={ele.img} alt="profile" />:null} 
+                                            {this.props.headerType === 'image' ?<img src={'data:image/png;base64, '+ele.img} alt="profile" />:null} 
                                             {ele.status === 'Registered'?
                                             <span className="approved"></span>:null
                                             }
