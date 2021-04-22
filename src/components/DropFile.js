@@ -96,10 +96,10 @@ const DropFile = (props) => {
     }
 
     const validateFile = (file) => {
-        if (file.type !== 'text/csv' || file.type !== 'application/vnd.ms-excel') {
-            return false;
+        if (file.type === 'text/csv' || file.type === 'application/vnd.ms-excel') {
+            return true;
         } 
-        return true;
+        return false;
     }
 
     const fileSize = (size) => {
