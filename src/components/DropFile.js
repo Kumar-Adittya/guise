@@ -96,7 +96,7 @@ const DropFile = (props) => {
     }
 
     const validateFile = (file) => {
-        if (file.type !== 'text/csv') {
+        if (file.type !== 'text/csv' || file.type !== 'application/vnd.ms-excel') {
             return false;
         } 
         return true;
