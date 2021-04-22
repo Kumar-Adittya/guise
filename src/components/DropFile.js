@@ -96,8 +96,7 @@ const DropFile = (props) => {
     }
 
     const validateFile = (file) => {
-        const validTypes = ['text/csv'];
-        if (validTypes.indexOf(file.type) === -1) {
+        if (file.type !== 'text/csv') {
             return false;
         } 
         return true;
