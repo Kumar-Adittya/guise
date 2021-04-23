@@ -150,7 +150,7 @@ class ProfileTable extends Component {
       }
 
     componentDidMount() {
-        let errors = /^([a-z0-9]{5,})$/.test(this.props.errorMsg)
+        let errors = /\d+/.test(this.props.errorMsg)
         console.log(errors)
         this.setState({
             errorBool: errors,
