@@ -3,6 +3,7 @@ import { livestream_img } from '../images/index'
 // import ProfileTable from './ProfileTable';
 import { dataService } from '../utility/data.service';
 import { Button } from 'semantic-ui-react';
+import $ from "jquery";
 
 class LiveStreamTab extends Component {
     constructor(props) {
@@ -102,6 +103,7 @@ class LiveStreamTab extends Component {
                         isUpload: false
                     })
                 }
+                $('input').val('');
             })
             .catch(error => { 
                alert(error)
@@ -125,12 +127,12 @@ class LiveStreamTab extends Component {
                         <img src={livestream_img} alt="Upload" />
                     </div>
                     <div className="form-group">
-                        <input type="text" onChange={this.handleChangeUrl} value={this.state.videoUrl} placeholder="Enter URL" className="form-control" />
+                        <input type="text" onChange={this.handleChangeUrl}  placeholder="Enter URL" className="form-control" />
                     </div>
                     <p className="upload-text">Upload Video Path</p>
                     <form onSubmit={this.submitHandler}>
                         <div className="form-group">
-                            <input type="text" onChange={this.handleChangePath} value={this.state.videoPath} placeholder="Enter Path" className="form-control" />
+                            <input type="text" onChange={this.handleChangePath} placeholder="Enter Path" className="form-control" />
                         </div>
                         {this.state.isUpload && <div className="upload_btn">
                             <Button type="submit" primary>Upload</Button>
