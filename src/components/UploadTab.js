@@ -3,6 +3,8 @@ import { upload_img, csvFile } from '../images/index'
 import ProfileTable from './ProfileTable';
 import { dataService } from '../utility/data.service';
 import DropFile from './DropFile'
+import  ModalLoader  from './modal';
+
 // import { log } from 'util';
 class UploadTab extends Component {
     constructor(props) {
@@ -19,7 +21,8 @@ class UploadTab extends Component {
             validFiles: {},
             csv_file: {},
             isAllUser: false,
-            error_msg: '0'
+            error_msg: '0',
+            isModal: false
         }
     }
 
@@ -154,6 +157,7 @@ class UploadTab extends Component {
                 <div className="sample_download">
                     <a href={csvFile} name={'test_csv_aws.csv'} type="text/csv" download>Download Sample</a>
                 </div>
+                <ModalLoader isShow={true}/>
                 <DropFile uploadFiles={(e) => this.submitHandler(e)} isUpload={!this.state.isUpload} registerClient={(e) => this.registerClient(e)} parentCallback={this.handleCallback} />
                 {this.state.isProfileTable ?
                     <ProfileTable userData={this.state.userData} isShow={this.state.show} isAllUser={this.state.isAllUser} headerType={'image'} errorMsg={this.state.error_msg} /> :

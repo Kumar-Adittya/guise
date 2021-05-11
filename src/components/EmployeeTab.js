@@ -2,6 +2,7 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react'
 import UploadTab from './UploadTab';
 import LiveStreamTab from './LiveStreamTab';
+import Attendance from './attendance';
 
 const panes = [
   {
@@ -11,6 +12,10 @@ const panes = [
   {
     menuItem: "Live Stream / Upload Videos",
     render: () => <Tab.Pane attached={false}><LiveStreamTab /></Tab.Pane>,
+  },
+  {
+    menuItem: "Attendance",
+    render: () => <Tab.Pane attached={false}><Attendance /></Tab.Pane>,
   },
 ]
 
