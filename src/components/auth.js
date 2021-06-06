@@ -9,7 +9,7 @@ export class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loader: true,
+            loader: false,
             username: 'sudheer',
             password: 'sudh@112',
             isFileAvailable: false
@@ -17,26 +17,28 @@ export class Login extends Component {
     }
 
     componentDidMount() {
-        if (!window.localStorage.getItem("token")) {
-            dataService.authToken(this.state.username, this.state.password)
-                .then(response => {
-                    if (response.token) {
-                        console.log(response)
-                        window.localStorage.setItem('token', response.token)
-                        window.localStorage.setItem('version', 'v-0.01')
-                        this.setState({
-                            loader: false
-                        })
-                    } else {
-                        // alert('Something Went Wrong !')
-                    }
-                })
-        }
-        else {
-            this.setState({
-                loader: false
-            })
-        }
+        // if (!window.localStorage.getItem("token")) {
+        //     dataService.authToken(this.state.username, this.state.password)
+        //         .then(response => {
+        //             if (response.token) {
+        //                 console.log(response)
+        //                 window.localStorage.setItem('token', response.token)
+        //                 window.localStorage.setItem('version', 'v-0.01')
+        //                 this.setState({
+        //                     loader: false
+        //                 })
+        //             } else {
+        //                 // alert('Something Went Wrong !')
+        //             }
+        //         })
+        // }
+        // else {
+        //     this.setState({
+        //         loader: false
+        //     })
+        // }
+        window.localStorage.setItem('token', '12345')
+        window.localStorage.setItem('version', 'v-0.01')
  
     }
     render() {
