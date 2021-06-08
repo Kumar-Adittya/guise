@@ -30,7 +30,7 @@ class Attendance extends Component {
             errorBool: false,
             isShow: false
         }
-        console.log("userData", this.props.userData)
+        //console.log("userData", this.props.userData)
         this.upload = React.createRef();
     }
 
@@ -77,7 +77,7 @@ class Attendance extends Component {
         submitData.append('product_name', this.state.product_name);
         submitData.append('product_image_name', this.state.product_image_name);
         submitData.append('product_image', this.state.product_image);
-        console.log(submitData);
+        //console.log(submitData);
         let id = submitData.get("id");
         this.setState({ open: false });
         dataService.editProduct(token, id, submitData)
@@ -110,7 +110,7 @@ class Attendance extends Component {
             .then(response => {
                 if (response) {
                     let arrAllData = this.state.userData;
-                    console.log("dle", arrAllData);
+                    //console.log("dle", arrAllData);
                     
                     for (let i = 0; i < arrAllData.length; i++) {
                         if (arrAllData[i].c_id === response.clientID) {
@@ -151,7 +151,7 @@ class Attendance extends Component {
 
     componentDidMount() {
         let errors = /\d+/.test(this.props.errorMsg)
-        console.log(errors)
+        //console.log(errors)
         this.setState({
             errorBool: errors,
             userData: this.props.userData,

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';   
+import { Button } from 'semantic-ui-react'; 
+import ModalLoader from './modal';
 
 const DropFile = (props) => {
 
@@ -15,8 +16,7 @@ const DropFile = (props) => {
     const [errorMessage, setErrorMessage] = useState('');  
     const [fileExceed, setFileExceed] = useState(false);  
     const [upload, setUpload] = useState(props.isUpload); 
-    
-    
+  
 
     useEffect(() => {
         let filteredArr = selectedFiles.reduce((acc, current) => {
@@ -66,7 +66,7 @@ const DropFile = (props) => {
     const fileDrop = (e) => {
         preventDefault(e); 
         const files = e.dataTransfer.files;
-        console.log(files.length); 
+        //console.log(files.length); 
         if (files.length) {
             handleFiles(files); 
         } 
@@ -151,8 +151,11 @@ const DropFile = (props) => {
 
     return (
         <>   
+           
             <div className="container">
                 <div className="btn-wrap">{unsupportedFiles.length === 0 && selectedFiles.length > 0 && !fileExceed ? <Button primary className="btn-sm btn-outline" onClick={(e) => props.uploadFiles(e)}>Register</Button> : ''}</div>
+                
+                
                 {unsupportedFiles.length ? <p>Please remove all unsupported files.</p> : ''}
                 <div className="file_uploader"
                     onDragOver={dragOver}

@@ -21,7 +21,7 @@ export class Login extends Component {
         //     dataService.authToken(this.state.username, this.state.password)
         //         .then(response => {
         //             if (response.token) {
-        //                 console.log(response)
+        //                 //console.log(response)
         //                 window.localStorage.setItem('token', response.token)
         //                 window.localStorage.setItem('version', 'v-0.01')
         //                 this.setState({

@@ -22,16 +22,15 @@ class UploadTab extends Component {
             csv_file: {},
             isAllUser: false,
             error_msg: '0',
-            isModal: false
         }
     }
-
+   
     handleCallback = (childData) => {
         this.setState({ validFiles: childData })
         this.setState({
             csv_file: childData[0]
         })
-        console.log(childData[0])
+        //console.log(childData[0])
     }
 
     handleChange = (e) => {
@@ -57,7 +56,7 @@ class UploadTab extends Component {
         e.preventDefault();
         let saveImgData = [];
         for (let i = 0; i < this.state.validFiles.length; i++) {
-            console.log(this.state.validFiles[i]);
+            //console.log(this.state.validFiles[i]);
             let obj = {};
             obj["name"] = '';
             obj["img"] = this.state.validFiles[i];
@@ -111,7 +110,7 @@ class UploadTab extends Component {
     }
     submitHandler = (e) => {
         e.preventDefault();
-        this.setState({ open: false });
+        this.setState({ open: false});
         const submitData = new FormData();
         submitData.append('csv_file', this.state.csv_file, this.state.csv_file.name);
 
@@ -138,8 +137,8 @@ class UploadTab extends Component {
 
     render() {
         return (
+            <>
             <div className="tab-content">
-                {console.log("userData", this.state.userData)}
                 <div className="image_caption">
                     <img src={upload_img} alt="Upload" />
                     <p>Upload CSV</p>
@@ -154,18 +153,23 @@ class UploadTab extends Component {
                         </label>
                         <span className="badge badge-primary">Sample CSV</span> 
                     </div> */}
+                    
                 <div className="sample_download">
                     <a href={csvFile} name={'test_csv_aws.csv'} type="text/csv" download>Download Sample</a>
                 </div>
-                <ModalLoader isShow={true}/>
-                <DropFile uploadFiles={(e) => this.submitHandler(e)} isUpload={!this.state.isUpload} registerClient={(e) => this.registerClient(e)} parentCallback={this.handleCallback} />
+                
+                <DropFile modalConfig={this.state.modalConfig} uploadFiles={(e) => this.submitHandler(e)} isUpload={!this.state.isUpload} registerClient={(e) => this.registerClient(e)} parentCallback={this.handleCallback} />
                 {this.state.isProfileTable ?
                     <ProfileTable userData={this.state.userData} isShow={this.state.show} isAllUser={this.state.isAllUser} headerType={'image'} errorMsg={this.state.error_msg} /> :
+                    <>
                     <div className="spinner">
                         <div className="loader"></div>
                     </div>
+                    <ModalLoader isShow={true}/>
+                    </>
                 }
             </div>
+            </>
         );
     }
 };

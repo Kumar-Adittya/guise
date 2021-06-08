@@ -245,7 +245,7 @@ body {
 }
 .table-responsive {
   width: calc(100% + 8px);
-  max-height: 165px;
+  max-height: 290px;
   overflow: auto;
   padding-right: 8px;
 }

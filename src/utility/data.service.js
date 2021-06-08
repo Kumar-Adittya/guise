@@ -24,7 +24,7 @@ function authToken(username, password) {
 
     return fetch(config.apiUrl + '/products/api-token-auth/', requestOptions)
         .then((res) => res.json()).then((result) => {
-            console.log(result)
+            //console.log(result)
             return result;
         });
 }
